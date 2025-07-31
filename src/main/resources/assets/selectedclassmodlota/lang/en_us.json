@@ -1,0 +1,51 @@
+{
+  "creativetab.selectedclassmodlota.class_selection": "Class Selection",
+
+  "item.selectedclassmodlota.class_selecter": "Class Select",
+  "item.selectedclassmodlota.class_reset": "Class Reset Item",
+
+  "tooltip.selectedclassmodlota.class_selecter": "§7Right-click to select your class",
+  "tooltip.selectedclassmodlota.class_reset": "§7Right-click to reset your class",
+
+  "command.selectedclassmodlota.resetclass.failure": "§cPlayer %s has not chosen a class!",
+  "command.selectedclassmodlota.resetclass.success": "§aReset class for player:",
+  "message.selectedclassmodlota.class_reset": "§aYour class has been reset",
+  "message.selectedclassmodlota.class_reset_and_select": "§aClass reset. Select a new one.",
+  "message.selectedclassmodlota.no_class_selected": "§cYou haven't chosen a class yet!",
+
+  "tooltip.selectedclassmodlota.given_by_class": "§7Given by class",
+
+  "message.selectedclassmodlota.class_selected": "§aYou selected class",
+  "message.selectedclassmodlota.class_selected_with_items": "§aYou selected class and received starter items",
+
+  "gui.selectedclassmodlota.class_select.title": "Class Selection",
+  "gui.selectedclassmodlota.confirm": "Confirm",
+
+  "class.selectedclassmodlota.knight": "Knight",
+  "class.selectedclassmodlota.knight.desc.1": "• Balanced class",
+  "class.selectedclassmodlota.knight.desc.2": "• Medium armor and damage",
+
+  "class.selectedclassmodlota.tank": "Tank",
+  "class.selectedclassmodlota.tank.desc.1": "• High armor",
+  "class.selectedclassmodlota.tank.desc.2": "• Low damage",
+
+  "class.selectedclassmodlota.berserk": "Berserk",
+  "class.selectedclassmodlota.berserk.desc.1": "• High damage",
+  "class.selectedclassmodlota.berserk.desc.2": "• Almost no armor",
+
+  "class.selectedclassmodlota.samurai": "Samurai",
+  "class.selectedclassmodlota.samurai.desc.1": "• Fast attacks",
+  "class.selectedclassmodlota.samurai.desc.2": "• Medium armor",
+
+  "class.selectedclassmodlota.assasin": "Assassin",
+  "class.selectedclassmodlota.assasin.desc.1": "• Stealth and criticals",
+  "class.selectedclassmodlota.assasin.desc.2": "• Very low protection",
+
+  "class.selectedclassmodlota.archer": "Archer",
+  "class.selectedclassmodlota.archer.desc.1": "• Ranged combat",
+  "class.selectedclassmodlota.archer.desc.2": "• High mobility",
+
+  "class.selectedclassmodlota.wizard": "Wizard",
+  "class.selectedclassmodlota.wizard.desc.1": "• Magical attacks",
+  "class.selectedclassmodlota.wizard.desc.2": "• Weak armor"
+}

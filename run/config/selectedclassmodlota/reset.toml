@@ -1,0 +1,6 @@
+
+[reset]
+	#Сколько раз игрок может сбросить свой класс через /classcommand resetclassself
+	#Range: > 0
+	maxSelfResets = 1
+

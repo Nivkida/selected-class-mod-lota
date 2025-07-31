@@ -1,0 +1,17 @@
+
+[class_items]
+	#Items for knight
+	knight = ["minecraft:iron_sword", "minecraft:bread, 16"]
+	#Items for tank
+	tank = ["minecraft:iron_chestplate"]
+	#Items for berserk
+	berserk = ["minecraft:stone_axe"]
+	#Items for samurai
+	samurai = ["minecraft:iron_sword"]
+	#Items for assasin
+	assasin = ["minecraft:stone_sword"]
+	#Items for archer
+	archer = ["minecraft:bow", "minecraft:arrow, 64"]
+	#Items for wizard
+	wizard = ["minecraft:stick"]
+

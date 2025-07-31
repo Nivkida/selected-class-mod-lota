@@ -1,0 +1,51 @@
+{
+  "creativetab.selectedclassmodlota.class_selection": "Выбор класса",
+
+  "item.selectedclassmodlota.class_selecter": "Выбор класса",
+  "item.selectedclassmodlota.class_reset": "Предмет сброса класса",
+
+  "tooltip.selectedclassmodlota.class_selecter": "§7Нажмите ПКМ, чтобы выбрать класс",
+  "tooltip.selectedclassmodlota.class_reset": "§7Нажмите ПКМ, чтобы сбросить класс",
+
+  "command.selectedclassmodlota.resetclass.failure": "§cИгрок не выбрал класс!",
+  "command.selectedclassmodlota.resetclass.success": "§aСброшен класс игроку:",
+  "message.selectedclassmodlota.class_reset": "§aВаш класс был сброшен",
+  "message.selectedclassmodlota.class_reset_and_select": "§aКласс сброшен. Выберите новый.",
+  "message.selectedclassmodlota.no_class_selected": "§cВы ещё не выбрали класс!",
+
+  "tooltip.selectedclassmodlota.given_by_class": "§7Выдано классом",
+
+  "message.selectedclassmodlota.class_selected": "§aВы выбрали класс",
+  "message.selectedclassmodlota.class_selected_with_items": "§aВы выбрали класс и получили стартовые предметы",
+
+  "gui.selectedclassmodlota.class_select.title": "Выбор класса",
+  "gui.selectedclassmodlota.confirm": "Подтвердить",
+
+  "class.selectedclassmodlota.knight": "Рыцарь",
+  "class.selectedclassmodlota.knight.desc.1": "• Сбалансированный класс",
+  "class.selectedclassmodlota.knight.desc.2": "• Средняя броня и урон",
+
+  "class.selectedclassmodlota.tank": "Танк",
+  "class.selectedclassmodlota.tank.desc.1": "• Высокая броня",
+  "class.selectedclassmodlota.tank.desc.2": "• Низкий урон",
+
+  "class.selectedclassmodlota.berserk": "Берсерк",
+  "class.selectedclassmodlota.berserk.desc.1": "• Высокий урон",
+  "class.selectedclassmodlota.berserk.desc.2": "• Почти нет брони",
+
+  "class.selectedclassmodlota.samurai": "Самурай",
+  "class.selectedclassmodlota.samurai.desc.1": "• Быстрые атаки",
+  "class.selectedclassmodlota.samurai.desc.2": "• Средняя броня",
+
+  "class.selectedclassmodlota.assasin": "Ассасин",
+  "class.selectedclassmodlota.assasin.desc.1": "• Стелс и криты",
+  "class.selectedclassmodlota.assasin.desc.2": "• Очень мало защиты",
+
+  "class.selectedclassmodlota.archer": "Лучник",
+  "class.selectedclassmodlota.archer.desc.1": "• Дальний бой",
+  "class.selectedclassmodlota.archer.desc.2": "• Высокая мобильность",
+
+  "class.selectedclassmodlota.wizard": "Маг",
+  "class.selectedclassmodlota.wizard.desc.1": "• Магические атаки",
+  "class.selectedclassmodlota.wizard.desc.2": "• Слабая броня"
+}
