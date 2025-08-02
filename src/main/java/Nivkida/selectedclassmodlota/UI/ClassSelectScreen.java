@@ -6,27 +6,67 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.resources.ResourceLocation;
 import Nivkida.selectedclassmodlota.network.ModNetwork;
 import Nivkida.selectedclassmodlota.network.ClassSelectPacket;
 
+import java.awt.Color;
 import java.util.*;
 
 public class ClassSelectScreen extends Screen {
-    // Полностью прозрачный фон
     private static final int BACKGROUND_COLOR = 0x00000000;
-
-    private int imageHeight;
-    private int guiTop;
-    private int buttonH;
-
+    private int imageHeight, guiTop, buttonH;
     private final List<ImageButton> classButtons = new ArrayList<>();
     private final Map<ImageButton, String> buttonToClass = new HashMap<>();
     private final Map<String, List<Component>> classDescriptions = new HashMap<>();
-
     private String selectedClass = null;
     private Button confirmButton;
     private final Runnable onConfirm;
+
+    private static final String[] CLASS_ORDER = {
+            "knight","tank","berserk","samurai","assasin","archer","wizard"
+    };
+
+    private final Map<String, GradientPalette> palettes = Map.of(
+            "knight",  new GradientPalette(
+                    Color.decode("#4B69FF"),   // Синий (рыцарская сталь)
+                    Color.decode("#C0C0FF"),   // Светло-синий (отблеск)
+                    Color.decode("#00004D")    // Тёмно-синий (окантовка)
+            ),
+            "tank",    new GradientPalette( // Оставлен оригинальный
+                    Color.decode("#D3D3D3"),
+                    Color.decode("#B0B0B0"),
+                    Color.decode("#2F2F2F")
+            ),
+            "berserk", new GradientPalette(
+                    Color.decode("#FF3300"),   // Кроваво-красный
+                    Color.decode("#FF9966"),   // Огненный оранжевый
+                    Color.decode("#4D0000")    // Тёмно-бордовый
+            ),
+            "samurai", new GradientPalette(
+                    Color.decode("#FF4D4D"),   // Красный (самурайская честь)
+                    Color.decode("#FF9999"),   // Розовый (цвет сакуры)
+                    Color.decode("#330000")    // Тёмно-красный
+            ),
+            "assasin", new GradientPalette(
+                    Color.decode("#9933FF"),   // Фиолетовый (тень)
+                    Color.decode("#D9B3FF"),   // Светло-фиолетовый (скрытность)
+                    Color.decode("#1A0033")    // Тёмно-фиолетовый
+            ),
+            "archer",  new GradientPalette(
+                    Color.decode("#66FF33"),   // Зелёный (лес)
+                    Color.decode("#CCFF99"),   // Светло-зелёный (листва)
+                    Color.decode("#003300")    // Тёмно-зелёный
+            ),
+            "wizard",  new GradientPalette(
+                    Color.decode("#BA55D3"),
+                    Color.decode("#A100A1"),
+                    Color.decode("#000021")
+            )
+    );
+
+    private float animOffset = 0f;
 
     public ClassSelectScreen(Runnable onConfirm) {
         super(Component.translatable("gui.selectedclassmodlota.class_select.title"));
@@ -36,163 +76,142 @@ public class ClassSelectScreen extends Screen {
     @Override
     protected void init() {
         super.init();
+        imageHeight = (int)(height * 0.7);
+        guiTop = (height - imageHeight) / 2;
 
-        // Масштаб imageHeight относительно высоты экрана
-        this.imageHeight = (int)(this.height * 0.7);
-        this.guiTop = (this.height - imageHeight) / 2;
+        for (String cls : CLASS_ORDER) {
+            classDescriptions.put(cls, loadDescription(cls));
+        }
 
-        // Инициализация описаний классов с локализацией
-        classDescriptions.put("knight", getLocalizedDescription("knight"));
-        classDescriptions.put("tank", getLocalizedDescription("tank"));
-        classDescriptions.put("berserk", getLocalizedDescription("berserk"));
-        classDescriptions.put("samurai", getLocalizedDescription("samurai"));
-        classDescriptions.put("assasin", getLocalizedDescription("assasin"));
-        classDescriptions.put("archer", getLocalizedDescription("archer"));
-        classDescriptions.put("wizard", getLocalizedDescription("wizard"));
-
-        String[] classNames = {"knight", "tank", "berserk", "samurai", "assasin", "archer", "wizard"};
-        int count = classNames.length;
-
-        // Расчет размеров кнопок
-        int totalSpacing = (int)(this.width * 0.1);
-        int usableWidth = this.width - totalSpacing;
-        int spacing = (int)(usableWidth * 0.05);
-        int buttonW = (usableWidth - spacing * (count - 1)) / count;
-        this.buttonH = buttonW * 114 / 66;
-
-        int y = guiTop + (int)(this.height * 0.1);
+        int count = CLASS_ORDER.length;
+        int totalPad = (int)(width * 0.1), usable = width - totalPad;
+        int gap = (int)(usable * 0.05), w = (usable - gap*(count-1)) / count;
+        buttonH = w * 114 / 66;
+        int buttonY = guiTop + (int)(height * 0.1);
 
         for (int i = 0; i < count; i++) {
-            String name = classNames[i];
-            int x = (this.width - usableWidth) / 2 + i * (buttonW + spacing);
-
-            ResourceLocation tex = ResourceLocation.fromNamespaceAndPath(
-                    "selectedclassmodlota", "textures/gui/" + name + ".png"
-            );
-
-            // Кнопка с анимированным масштабом
-            ImageButton btn = new ImageButton(x, y, buttonW, buttonH,
-                    0, 0, buttonH,
-                    tex, buttonW, buttonH,
-                    b -> {
-                        selectedClass = buttonToClass.get(b);
-                        confirmButton.active = true;
-                    },
-                    Component.translatable("class.selectedclassmodlota." + name) // Локализованное название
+            String cls = CLASS_ORDER[i];
+            int x = (width - usable)/2 + i*(w + gap);
+            ResourceLocation tex = new ResourceLocation("selectedclassmodlota:textures/gui/" + cls + ".png");
+            ImageButton btn = new ImageButton(x, buttonY, w, buttonH, 0,0,buttonH, tex, w,buttonH,
+                    b -> { selectedClass = buttonToClass.get(b); confirmButton.active = true; },
+                    Component.translatable("class.selectedclassmodlota." + cls)
             ) {
-                private float scale = 1.0f;
-                private float targetScale = 1.0f;
-                private final float speed = 0.45f;
-
+                private float scale = 1f;
                 @Override
-                public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-                    String className = buttonToClass.get(this);
-                    targetScale = className.equals(selectedClass) ? 1.1f : 1.0f;
-
-                    if (scale != targetScale) {
-                        float delta = (targetScale - scale) * speed * partialTicks;
-                        scale += delta;
-                        if (Math.abs(scale - targetScale) < 0.01f) {
-                            scale = targetScale;
-                        }
-                    }
-
-                    guiGraphics.pose().pushPose();
-                    guiGraphics.pose().translate(getX() + getWidth() / 2.0f, getY() + getHeight() / 2.0f, 0);
-                    guiGraphics.pose().scale(scale, scale, 1.0f);
-                    guiGraphics.pose().translate(-getX() - getWidth() / 2.0f, -getY() - getHeight() / 2.0f, 0);
-
-                    super.render(guiGraphics, mouseX, mouseY, partialTicks);
-                    guiGraphics.pose().popPose();
+                public void render(GuiGraphics gg, int mx, int my, float pt) {
+                    float target = cls.equals(selectedClass) ? 1.1f : 1f;
+                    scale += (target - scale) * 0.45f * pt;
+                    gg.pose().pushPose();
+                    gg.pose().translate(getX()+getWidth()/2f, getY()+getHeight()/2f,0);
+                    gg.pose().scale(scale,scale,1f);
+                    gg.pose().translate(-getX()-getWidth()/2f, -getY()-getHeight()/2f,0);
+                    super.render(gg,mx,my,pt);
+                    gg.pose().popPose();
                 }
             };
-
             classButtons.add(btn);
-            buttonToClass.put(btn, name);
-            this.addRenderableWidget(btn);
+            buttonToClass.put(btn, cls);
+            addRenderableWidget(btn);
         }
 
-        // Кнопка подтверждения с локализацией
-        int cw = (int)(this.width * 0.15);
-        int ch = (int)(this.height * 0.05);
-        confirmButton = Button.builder(Component.translatable("gui.selectedclassmodlota.confirm"), b -> {
-            if (selectedClass != null) {
-                ModNetwork.INSTANCE.sendToServer(new ClassSelectPacket(selectedClass));
-                onClose();
-            }
-        }).bounds((this.width - cw) / 2, this.guiTop + imageHeight - (int)(this.height * 0.1), cw, ch).build();
-
+        int cw = (int)(width * 0.15), ch = (int)(height * 0.05);
+        int cy = guiTop + imageHeight + (int)(height * 0.05);
+        confirmButton = Button.builder(
+                Component.translatable("gui.selectedclassmodlota.confirm"),
+                b -> {
+                    if (selectedClass != null) {
+                        ModNetwork.INSTANCE.sendToServer(new ClassSelectPacket(selectedClass));
+                        onClose();
+                    }
+                }
+        ).bounds((width-cw)/2, cy, cw, ch).build();
         confirmButton.active = false;
-        this.addRenderableWidget(confirmButton);
+        addRenderableWidget(confirmButton);
     }
 
-    // Получение локализованного описания класса
-    private List<Component> getLocalizedDescription(String className) {
-        List<Component> description = new ArrayList<>();
-
-        // Название класса
-        description.add(Component.translatable("class.selectedclassmodlota." + className));
-
-        // Характеристики
-        for (int i = 1; i <= 2; i++) {
-            String key = "class.selectedclassmodlota." + className + ".desc." + i;
-            description.add(Component.translatable(key));
+    private List<Component> loadDescription(String cls) {
+        List<Component> list = new ArrayList<>();
+        list.add(Component.literal(I18n.get("class.selectedclassmodlota." + cls)));
+        int i = 1;
+        while (I18n.exists("class.selectedclassmodlota." + cls + ".desc." + i)) {
+            list.add(Component.literal(I18n.get("class.selectedclassmodlota." + cls + ".desc." + i)));
+            i++;
         }
-
-        return description;
+        return list;
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == 256) {
-            return true;
-        }
-        return super.keyPressed(keyCode, scanCode, modifiers);
+    public boolean keyPressed(int kc,int sc,int m){
+        return kc==256||super.keyPressed(kc,sc,m);
     }
 
     @Override
-    public void onClose() {
+    public void onClose(){
         super.onClose();
-        if (onConfirm != null) {
-            Minecraft.getInstance().execute(() -> onConfirm.run());
-        }
+        if(onConfirm!=null) Minecraft.getInstance().execute(onConfirm);
     }
 
     @Override
-    public void renderBackground(GuiGraphics gg) {
-        gg.fill(0, 0, this.width, this.height, BACKGROUND_COLOR);
+    public void renderBackground(GuiGraphics gg){
+        gg.fill(0,0,width,height,BACKGROUND_COLOR);
     }
 
     @Override
     public void render(GuiGraphics gg, int mx, int my, float pt) {
         super.render(gg, mx, my, pt);
+        if (selectedClass == null) return;
 
-        if (selectedClass != null) {
-            List<Component> description = classDescriptions.getOrDefault(selectedClass, List.of());
-            int textY = guiTop + buttonH + (int)(this.height * 0.15);
-            int textX = this.width / 2;
-            int lineHeight = (int)(this.height * 0.025);
-            int backgroundPadding = (int)(this.width * 0.01);
-            int maxWidth = 0;
+        animOffset = (animOffset + pt * 0.075f) % 1f;
 
-            for (Component line : description) {
-                int width = this.font.width(line);
-                if (width > maxWidth) {
-                    maxWidth = width;
+        GradientPalette pal = palettes.get(selectedClass);
+        List<Component> desc = classDescriptions.get(selectedClass);
+
+        int pad = (int)(width * 0.01f);
+        int buttonY = guiTop + (int)(height * 0.1);
+        int bgY = buttonY + buttonH + pad * 2;
+        int lineH = (int)(height * 0.03f);
+        int maxW = desc.stream().mapToInt(c->font.width(c.getString())).max().orElse(0);
+        int bgW = maxW + pad*2;
+        int bgH = desc.size()*lineH + pad*2;
+        int bgX = width/2 - bgW/2;
+        gg.fill(bgX,bgY,bgX+bgW,bgY+bgH,0x80000000);
+
+        for (int i = 0; i < desc.size(); i++) {
+            String s = desc.get(i).getString();
+            int y = bgY + pad + i*lineH;
+            if (i == 0) {
+                int tx = width/2 - font.width(s)/2;
+                float repeatFactor = s.length() < 5 ? 2.0f : 1.0f;
+                for (int j = 0; j < s.length(); j++) {
+                    float position = s.length() > 1 ? (float)j / (s.length() - 1) * repeatFactor : 0f;
+                    float t_full = (animOffset + position) % 1f;
+                    int rgb = pal.getInterpolatedColor(t_full);
+                    gg.drawString(font, String.valueOf(s.charAt(j)), tx, y, rgb);
+                    tx += font.width(String.valueOf(s.charAt(j)));
                 }
+            } else {
+                gg.drawCenteredString(font, desc.get(i), width/2, y, 0xFFFFFF);
             }
+        }
+    }
 
-            maxWidth = Math.min(maxWidth, (int)(this.width * 0.8));
+    private static class GradientPalette {
+        private final Color startColor, endColor;
+        public final int outlineColor;
 
-            int bgX = textX - maxWidth / 2 - backgroundPadding;
-            int bgY = textY - backgroundPadding;
-            int bgWidth = maxWidth + backgroundPadding * 2;
-            int bgHeight = description.size() * lineHeight + backgroundPadding * 2;
-            gg.fill(bgX, bgY, bgX + bgWidth, bgY + bgHeight, 0x80000000);
+        public GradientPalette(Color start, Color end, Color outline) {
+            this.startColor = start;
+            this.endColor = end;
+            this.outlineColor = outline.getRGB() & 0xFFFFFF;
+        }
 
-            for (int i = 0; i < description.size(); i++) {
-                gg.drawCenteredString(this.font, description.get(i), textX, textY + i * lineHeight, 0xFFFFFF);
-            }
+        public int getInterpolatedColor(float t) {
+            t = Math.max(0f, Math.min(1f, t));
+            int r = (int)(startColor.getRed()   + t*(endColor.getRed()   - startColor.getRed()));
+            int g = (int)(startColor.getGreen() + t*(endColor.getGreen() - startColor.getGreen()));
+            int b = (int)(startColor.getBlue()  + t*(endColor.getBlue()  - startColor.getBlue()));
+            return (r<<16)|(g<<8)|b;
         }
     }
 }
