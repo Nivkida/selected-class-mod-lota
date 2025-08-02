@@ -29,41 +29,13 @@ public class ClassSelectScreen extends Screen {
     };
 
     private final Map<String, GradientPalette> palettes = Map.of(
-            "knight",  new GradientPalette(
-                    Color.decode("#4B69FF"),   // Синий (рыцарская сталь)
-                    Color.decode("#C0C0FF"),   // Светло-синий (отблеск)
-                    Color.decode("#00004D")    // Тёмно-синий (окантовка)
-            ),
-            "tank",    new GradientPalette( // Оставлен оригинальный
-                    Color.decode("#D3D3D3"),
-                    Color.decode("#B0B0B0"),
-                    Color.decode("#2F2F2F")
-            ),
-            "berserk", new GradientPalette(
-                    Color.decode("#FF3300"),   // Кроваво-красный
-                    Color.decode("#FF9966"),   // Огненный оранжевый
-                    Color.decode("#4D0000")    // Тёмно-бордовый
-            ),
-            "samurai", new GradientPalette(
-                    Color.decode("#FF4D4D"),   // Красный (самурайская честь)
-                    Color.decode("#FF9999"),   // Розовый (цвет сакуры)
-                    Color.decode("#330000")    // Тёмно-красный
-            ),
-            "assasin", new GradientPalette(
-                    Color.decode("#9933FF"),   // Фиолетовый (тень)
-                    Color.decode("#D9B3FF"),   // Светло-фиолетовый (скрытность)
-                    Color.decode("#1A0033")    // Тёмно-фиолетовый
-            ),
-            "archer",  new GradientPalette(
-                    Color.decode("#66FF33"),   // Зелёный (лес)
-                    Color.decode("#CCFF99"),   // Светло-зелёный (листва)
-                    Color.decode("#003300")    // Тёмно-зелёный
-            ),
-            "wizard",  new GradientPalette(
-                    Color.decode("#BA55D3"),
-                    Color.decode("#A100A1"),
-                    Color.decode("#000021")
-            )
+            "knight",  new GradientPalette(Color.decode("#FFD700"), Color.decode("#C0C0C0"), Color.decode("#4D4D4D")),
+            "tank",    new GradientPalette(Color.decode("#D3D3D3"), Color.decode("#B0B0B0"), Color.decode("#2F2F2F")),
+            "berserk", new GradientPalette(Color.decode("#FF4500"), Color.decode("#8B0000"), Color.decode("#8B0000")),
+            "samurai", new GradientPalette(Color.decode("#FFB6C1"), Color.decode("#DC143C"), Color.decode("#330033")),
+            "assasin", new GradientPalette(Color.decode("#6A5ACD"), Color.decode("#9370DB"), Color.decode("#001F00")),
+            "archer",  new GradientPalette(Color.decode("#32CD32"), Color.decode("#006400"), Color.decode("#004C66")),
+            "wizard",  new GradientPalette(Color.decode("#BA55D3"), Color.decode("#A100A1"), Color.decode("#000021"))
     );
 
     private float animOffset = 0f;
@@ -162,7 +134,7 @@ public class ClassSelectScreen extends Screen {
         super.render(gg, mx, my, pt);
         if (selectedClass == null) return;
 
-        animOffset = (animOffset + pt * 0.075f) % 1f;
+        animOffset = (animOffset + pt * 0.05f) % 1f;
 
         GradientPalette pal = palettes.get(selectedClass);
         List<Component> desc = classDescriptions.get(selectedClass);
@@ -182,11 +154,12 @@ public class ClassSelectScreen extends Screen {
             int y = bgY + pad + i*lineH;
             if (i == 0) {
                 int tx = width/2 - font.width(s)/2;
-                float repeatFactor = s.length() < 5 ? 2.0f : 1.0f;
+                float k = s.length() < 5 ? 4.0f : 1.0f;
                 for (int j = 0; j < s.length(); j++) {
-                    float position = s.length() > 1 ? (float)j / (s.length() - 1) * repeatFactor : 0f;
+                    float position = s.length() > 1 ? (float)j / (s.length() - 1) * k : 0f;
                     float t_full = (animOffset + position) % 1f;
-                    int rgb = pal.getInterpolatedColor(t_full);
+                    float t = 1 - Math.abs(2 * t_full - 1);
+                    int rgb = pal.getInterpolatedColor(t);
                     gg.drawString(font, String.valueOf(s.charAt(j)), tx, y, rgb);
                     tx += font.width(String.valueOf(s.charAt(j)));
                 }
